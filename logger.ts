@@ -1,3 +1,6 @@
+const fs = require('fs');
+
+
 enum colors
 {
 	fgBlack = 30,
@@ -27,21 +30,11 @@ class log implements logInterface
 	name : string;
 	conf : configurationInterface;
 
-	consoleAction = {
-		"info": function(color:string,msg:string,parameters?: any[]) {console.log(color,msg,parameters);},
-		"debug": function(color:string,msg:string,parameters?: any[]) {console.log(color,msg,parameters);},
-		"error": function(color:string,msg:string,parameters?: any[]) {console.log(color,msg,parameters);},
-		"warn": function(color:string,msg:string,parameters?: any[]) {console.log(color,msg,parameters);}
-	};
-
 	constructor(name:string, conf:configurationInterface)
 	{
 		this.name = name;
 		this.conf = conf;
 	}
-
-
-	log
 
 	public debug(msg:string,supportingDetails?:any[]): void {
 		this.emitLogMassage("debug",msg,supportingDetails,colors.fgBlack);
@@ -65,15 +58,25 @@ class log implements logInterface
 
 		let color = `\x1b[${colorType}m%s\x1b[0m`;
 
-		if(supportingDetails && supportingDetails.length > 0)
-			this.consoleAction[msgType](color,msg,supportingDetails);
-		else
-			this.consoleAction[msgType](color,msg);
+		if(this.conf.console) {
+			if (supportingDetails && supportingDetails.length > 0)
+				console.log(color, msg, supportingDetails);
+			else
+				console.log(color, msg);
+		}
+
+		if(this.conf.file) {
+			var fs = require('fs');
+			fs.appendFile("./tmp/text.txt", msg + ':' + supportingDetails + ':'+ msgType +  '\r\n' , function (err) {
+				if (err) { throw err}
+			});
+		}
+
 
 	}
 }
 
-let logger = new log("oz",{console:true,file:false,colors:true,logLevel:false});
+let logger = new log("oz",{console:true,file:true,colors:true,logLevel:false});
 
 logger.info("oz",[""]);
 logger.debug("oz",[""]);
