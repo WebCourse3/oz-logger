@@ -1,3 +1,4 @@
+//comment for git
 import {log} from './logger';
 
 export class consoleLog extends log

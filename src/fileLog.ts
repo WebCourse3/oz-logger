@@ -1,3 +1,4 @@
+//comment for git
 import {log} from './logger';
 const fs = require('fs');
 
