@@ -2,9 +2,9 @@ import { logInterface } from '../interfaces/logInterface';
 import { configurationInterface } from '../interfaces/configurationInterface';
 import {colors} from '../enums/colors';
 import {actions} from '../enums/actions';
-const fs = require('fs')
 
-export class log implements logInterface
+
+export abstract class log implements logInterface
 {
 	name : string;
 	conf : configurationInterface;
@@ -53,18 +53,11 @@ export class log implements logInterface
 
 		let color = `\x1b[${colorType}m%s\x1b[0m`;
 
-		if(this.conf.console)
-			console.log(color, msg);
+		this.write(color,msg);
 
-		if(this.conf.file)
-			this.writeToFile(msg + '\r\n');
 	}
 
-	private writeToFile(msg:string): void
-	{
-		fs.appendFile(this.fileName, msg, err => {
-			if (err) throw err;
-		});
-	}
+	abstract write(color:string,msg:string):  void;
+
 }
 
