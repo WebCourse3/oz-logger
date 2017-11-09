@@ -3,7 +3,6 @@ import { configurationInterface } from '../interfaces/configurationInterface';
 import {colors} from '../enums/colors';
 import {actions} from '../enums/actions';
 
-
 export abstract class log implements logInterface
 {
 	name : string;
@@ -17,6 +16,26 @@ export abstract class log implements logInterface
 		this.fileName = "../tmp/text.txt";
 	}
 
+	configurationByFile(fsFile: string): boolean
+	{
+		const fs = require('fs');
+		let returnValue = false;
+
+		if (fs.existsSync(fsFile))
+		{
+			let configurationJson: string = fs.readFileSync(fsFile, "utf8");
+			let newConfiguration = JSON.parse(configurationJson);
+
+			this.conf.console = newConfiguration.console;
+			this.conf.logLevel = newConfiguration.logLevel;
+			this.conf.colors = newConfiguration.color;
+			this.conf.file = newConfiguration.file;
+
+			returnValue = true;
+		}
+
+		return (returnValue);
+	}
 	public setConfiguration(configuration:configurationInterface)
 	{
 		this.conf.console = configuration.console;
